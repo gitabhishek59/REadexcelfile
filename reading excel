@@ -1,0 +1,62 @@
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+
+
+public List<String> filterExcelData(String filePath, String filterValue) {
+    List<String> result = new ArrayList<>();
+
+    try {
+        FileInputStream excelFile = new FileInputStream(new File(filePath));
+        Workbook workbook = new XSSFWorkbook(excelFile);
+
+        // Assuming your data is in the first sheet, change accordingly if not
+        Sheet sheet = workbook.getSheetAt(0);
+
+        for (Row row : sheet) {
+            // Assuming column A is for filtering and column B for data
+            Cell cellA = row.getCell(0); // Column A
+            Cell cellB = row.getCell(1); // Column B
+
+            if (cellA != null && cellA.getCellType() == CellType.STRING) {
+                String cellAValue = cellA.getStringCellValue();
+
+                // Check if the value in column A matches your filter value
+                if (cellAValue.equals(filterValue)) {
+                    if (cellB != null) {
+                        String cellBValue = cellB.getStringCellValue();
+                        result.add(cellBValue);
+                    }
+                }
+            }
+        }
+
+        // Close the workbook and input stream
+        workbook.close();
+        excelFile.close();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return result;
+}
+
+
+
+
+
+
+
+
+
+
+
+String filePath = "path/to/your/excel/file.xlsx";
+String filterValue = "X";
+
+List<String> filteredValues = filterExcelData(filePath, filterValue);
+
+// Print the filtered values
+for (String value : filteredValues) {
+    System.out.println(value);
+}
