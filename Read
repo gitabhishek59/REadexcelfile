@@ -1,0 +1,54 @@
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ExcelDataFilter {
+    public static void main(String[] args) {
+        List<String> regions = new ArrayList<>();
+        List<String> businessTypes = new ArrayList<>();
+        List<String> subRegions = new ArrayList<>();
+        List<String> countries = new ArrayList<>();
+        List<String> issuers = new ArrayList<>();
+        List<String> peerGroups = new ArrayList<>();
+
+        filterExcelData("your_excel_file.xlsx", "desired_region", "desired_business_type", "desired_sub_region", "desired_country", "desired_issuer",
+                        regions, businessTypes, subRegions, countries, issuers, peerGroups);
+
+        // Now you have the filtered data in the respective lists.
+    }
+
+    public static void filterExcelData(String filePath, String regionParam, String businessTypeParam, String subRegionParam, String countryParam, String issuerParam,
+                                       List<String> regions, List<String> businessTypes, List<String> subRegions, List<String> countries, List<String> issuers, List<String> peerGroups) {
+        try {
+            FileInputStream excelFile = new FileInputStream(filePath);
+            Workbook workbook = new XSSFWorkbook(excelFile);
+            Sheet sheet = workbook.getSheetAt(0); // Assuming data is in the first sheet
+
+            for (Row row : sheet) {
+                String region = row.getCell(0).getStringCellValue();
+                String businessType = row.getCell(1).getStringCellValue();
+                String subRegion = row.getCell(2).getStringCellValue();
+                String country = row.getCell(3).getStringCellValue();
+                String issuer = row.getCell(4).getStringCellValue();
+                String peerGroup = row.getCell(5).getStringCellValue();
+
+                if (region.equals(regionParam) && businessType.equals(businessTypeParam)) {
+                    regions.add(region);
+                    businessTypes.add(businessType);
+                    subRegions.add(subRegion);
+                    countries.add(country);
+                    issuers.add(issuer);
+                    peerGroups.add(peerGroup);
+                }
+            }
+
+            workbook.close();
+            excelFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
